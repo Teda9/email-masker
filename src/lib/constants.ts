@@ -1,5 +1,7 @@
 export const STORE_KEYS = {
   EMAIL_FORMAT: 'em_email_format',
+  EMAIL_DOMAINS: 'em_email_domains',
+  ACTIVE_EMAIL_DOMAIN: 'em_active_email_domain',
   AUTOFILL: 'em_autofill',
   EXCLUDE_LIST: 'em_exclude_list',
   EXCLUDE_LIST_PATTERNS: 'em_exclude_list_patterns',

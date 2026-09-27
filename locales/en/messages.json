@@ -43,6 +43,46 @@
     "message": "Email Format",
     "description": "Label for email format."
   },
+  "emailDomainLabel": {
+    "message": "Email Domain",
+    "description": "Label for the saved email domain selector."
+  },
+  "addEmailDomainPlaceholder": {
+    "message": "e.g. example.org",
+    "description": "Placeholder for adding an email domain."
+  },
+  "newEmailDomainLabel": {
+    "message": "New email domain",
+    "description": "Accessible label for the new email domain field."
+  },
+  "addEmailDomainTooltip": {
+    "message": "Add email domain",
+    "description": "Tooltip for adding an email domain."
+  },
+  "removeEmailDomainTooltip": {
+    "message": "Remove selected email domain",
+    "description": "Tooltip for removing the selected email domain."
+  },
+  "invalidEmailDomainToastDesc": {
+    "message": "Enter a valid domain name, such as example.org.",
+    "description": "Toast error description for an invalid email domain."
+  },
+  "duplicateEmailDomainToastDesc": {
+    "message": "This email domain is already saved.",
+    "description": "Toast error description for a duplicate email domain."
+  },
+  "keepOneEmailDomainToastDesc": {
+    "message": "At least one email domain must remain saved.",
+    "description": "Toast error description when trying to remove the last email domain."
+  },
+  "emailDomainAddedToast": {
+    "message": "Email domain added.",
+    "description": "Toast success message after adding an email domain."
+  },
+  "emailDomainRemovedToast": {
+    "message": "Email domain removed.",
+    "description": "Toast success message after removing an email domain."
+  },
   "saveEmailFormatTooltip": {
     "message": "Save Email Format",
     "description": "Tooltip instruction for saving email format."

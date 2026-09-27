@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-09-27
+
+### Added
+
+- Save multiple email domains and switch between them from the popup.
+- Migrate the existing email format and keep its local-part pattern when switching domains.
+
 ## [0.2.1]
 
 ### Fixed
@@ -57,7 +64,8 @@ All notable changes to this project will be documented in this file.
 
 - Release of something awesome.
 
-[unreleased]: https://github.com/irazasyed/email-masker/compare/0.2.1...HEAD
+[unreleased]: https://github.com/Teda9/email-masker/compare/0.2.2...HEAD
+[0.2.2]: https://github.com/Teda9/email-masker/compare/0.2.1...0.2.2
 [0.2.1]: https://github.com/irazasyed/email-masker/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/irazasyed/email-masker/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/irazasyed/email-masker/compare/0.0.1...0.1.0
