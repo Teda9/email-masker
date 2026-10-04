@@ -1,0 +1,128 @@
+name: Build and release extensions
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*', '[0-9]*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extension-release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      version: ${{ steps.packages.outputs.version }}
+      tag: ${{ steps.packages.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run package
+      - run: npm exec -- tsc --noEmit --incremental false
+      - run: npm exec -- web-ext lint --source-dir build/firefox-mv2-prod
+      - name: Verify and prepare browser packages
+        id: packages
+        run: |
+          python3 - <<'PY'
+          import fnmatch
+          import hashlib
+          import json
+          import os
+          import shutil
+          import zipfile
+          from pathlib import Path
+
+          package = json.loads(Path('package.json').read_text())
+          version = package['version']
+          output = Path('build/release')
+          output.mkdir(parents=True, exist_ok=True)
+          checksums = []
+          for browser, manifest_version in [('chrome-mv3', 3), ('firefox-mv2', 2)]:
+              source = Path('build') / f'{browser}-prod.zip'
+              folder = Path('build') / f'{browser}-prod'
+              with zipfile.ZipFile(source) as archive:
+                  if archive.testzip() is not None:
+                      raise SystemExit(f'{browser}: ZIP integrity check failed')
+                  manifest = json.loads(archive.read('manifest.json'))
+                  if manifest['manifest_version'] != manifest_version or manifest['version'] != version:
+                      raise SystemExit(f'{browser}: manifest or version mismatch')
+                  if browser == 'firefox-mv2':
+                      gecko = manifest['browser_specific_settings']['gecko']['id']
+                      if gecko != package['manifest']['browser_specific_settings']['gecko']['id']:
+                          raise SystemExit('Firefox add-on ID mismatch')
+                  names = set(archive.namelist())
+                  action = manifest['action' if manifest_version == 3 else 'browser_action']
+                  resources = list(manifest.get('icons', {}).values()) + [action['default_popup']]
+                  for content in manifest.get('content_scripts', []):
+                      resources.extend(content.get('js', []) + content.get('css', []))
+                  for group in manifest.get('web_accessible_resources', []):
+                      resources.extend([group] if isinstance(group, str) else group['resources'])
+                  resources.append(f"_locales/{manifest['default_locale']}/messages.json")
+                  for resource in resources:
+                      if not any(fnmatch.fnmatchcase(name, resource) for name in names):
+                          raise SystemExit(f'{browser}: missing resource {resource}')
+                  for item in archive.infolist():
+                      if not item.is_dir() and archive.read(item) != (folder / item.filename).read_bytes():
+                          raise SystemExit(f'{browser}: packaged file mismatch: {item.filename}')
+              suffix = '-unsigned' if browser.startswith('firefox') else ''
+              target = output / f'email-masker-{version}-{browser}{suffix}.zip'
+              shutil.copy2(source, target)
+              digest = hashlib.sha256(target.read_bytes()).hexdigest()
+              checksums.append(f'{digest}  {target.name}')
+              print(f'Validated {browser}: manifest v{manifest_version}, version {version}')
+          (output / 'SHA256SUMS.txt').write_text('\n'.join(checksums) + '\n', encoding='ascii')
+          tag = (os.environ['GITHUB_REF_NAME'] if os.environ['GITHUB_REF_TYPE'] == 'tag'
+                 else f"v{version}-build.{os.environ['GITHUB_RUN_NUMBER']}")
+          with Path(os.environ['GITHUB_OUTPUT']).open('a', encoding='utf-8') as stream:
+              stream.write(f'version={version}\ntag={tag}\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension-packages
+          path: build/release/*
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    needs: build
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: extension-packages
+          path: release-assets
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: 'Email Masker ${{ needs.build.outputs.version }} · Build #${{ github.run_number }}'
+          body: |
+            Automatically built Chrome Manifest V3 and Firefox Manifest V2 packages.
+
+            Source: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+            Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Chrome: extract the chrome-mv3 ZIP and load the folder through chrome://extensions.
+            Firefox: the firefox-mv2 ZIP is unsigned. Extract it and load manifest.json through about:debugging for temporary use. Permanent installation in standard Firefox requires Mozilla signing.
+
+            SHA256SUMS.txt contains checksums for both browser packages.
+          files: release-assets/*
+          fail_on_unmatched_files: true
+          overwrite_files: true
+          make_latest: true

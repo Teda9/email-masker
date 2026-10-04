@@ -1,5 +1,5 @@
 import type { PlasmoCSConfig } from 'plasmo'
-import icon from 'data-base64:~assets/flame.svg'
+import icon from 'url:~assets/flame.svg'
 import { applyShortcodesWithDomain } from '@/lib/apply-shortcodes'
 import {
   addInlineStyles,

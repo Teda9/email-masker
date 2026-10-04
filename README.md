@@ -22,6 +22,7 @@ Extension by [@irazasyed](https://github.com/irazasyed)
 - [Supported Browsers](#supported-browsers)
 - [Highlights](#highlights)
 - [Email Format Templates](#email-format-templates)
+- [Build and Automatic Releases](#build-and-automatic-releases)
 - [Contributing](#contributing)
 - [Security Vulnerabilities](#security-vulnerabilities)
 - [Code of Conduct](#code-of-conduct)
@@ -156,6 +157,23 @@ The above format will generate email addresses like `github.29wun@example.com`
 ```
 prefix-[random:8]@example.com
 ```
+
+## Build and Automatic Releases
+
+The fork's `Build and release extensions` workflow builds both Chrome Manifest V3 and Firefox Manifest V2 packages whenever updates are pushed to `main` / `master`, a `v*` or numeric version tag is pushed, or the workflow is run manually. It installs dependencies from `package-lock.json`, builds both ZIPs, checks TypeScript and the Firefox package, then verifies manifest versions, extension versions, referenced resources and packaged files before publishing to GitHub Releases.
+
+Ordinary updates use `v<package.json version>-build.<run number>` as the release tag; version-tag builds use the original tag. Successful releases are marked Latest and include `email-masker-<version>-chrome-mv3.zip`, `email-masker-<version>-firefox-mv2-unsigned.zip` and `SHA256SUMS.txt`. Rerunning a workflow updates the same release. Pull requests build and check packages without publishing. Both browser builds must pass before a release is published. No additional release secrets are required; only the release job has `contents: write` permission. Keep `.github/workflows/release.yml` when copying future upstream updates. The first automated release still needs confirmation from a real GitHub run.
+
+The browser ZIPs contain compiled extension files. GitHub's separate Source code downloads contain the repository at the release tag. The on-page flame icon uses a `url:` import so it is included as a real SVG file and its generated manifest entry points to an existing resource.
+
+To build both packages locally:
+
+```sh
+npm ci
+npm run package
+```
+
+Chrome: extract `build/chrome-mv3-prod.zip`, open `chrome://extensions`, enable Developer mode and load the extracted folder. Firefox: extract `build/firefox-mv2-prod.zip`, open `about:debugging#/runtime/this-firefox` and load `manifest.json` as a temporary add-on. The Firefox ZIP is unsigned; permanent installation in standard Firefox requires [Mozilla signing](https://extensionworkshop.com/documentation/publish/signing-and-distribution-overview/). GitHub Releases publishing does not sign the extension or submit it to a browser store. The existing `Submit to Web Store` workflow remains a separate manual Chrome store submission requiring `SUBMIT_KEYS`.
 
 ## Contributing
 
