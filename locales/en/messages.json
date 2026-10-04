@@ -84,7 +84,7 @@
     "description": "Toast success message after removing an email domain."
   },
   "saveEmailFormatTooltip": {
-    "message": "Save Email Format",
+    "message": "Update selected format",
     "description": "Tooltip instruction for saving email format."
   },
   "shortcodesLabel": {
@@ -134,5 +134,68 @@
   "autofillDesc": {
     "message": "On-Page Autofill Button",
     "description": "Description for autofill option."
+  },
+  "savedEmailFormatsLabel": {
+    "message": "Saved email formats",
+    "description": "Accessible label for the saved format selector."
+  },
+  "emailFormatPatternLabel": {
+    "message": "Email pattern before @",
+    "description": "Accessible label for the shared email pattern editor."
+  },
+  "emailFormatSharedHint": {
+    "message": "Shared by all email domains.",
+    "description": "Explains that presets are independent of the selected domain."
+  },
+  "emailFormatUnsavedHint": {
+    "message": "Unsaved changes. Update or save as new.",
+    "description": "Explains that editing does not change the active saved format."
+  },
+  "saveEmailFormatAsNew": {
+    "message": "Save as new",
+    "description": "Button for saving the edited pattern as another preset."
+  },
+  "removeEmailFormatTooltip": {
+    "message": "Delete selected format",
+    "description": "Tooltip for deleting the selected format preset."
+  },
+  "duplicateEmailFormatToastDesc": {
+    "message": "This format is already saved. Select it from the list.",
+    "description": "Error when adding or updating to a duplicate pattern."
+  },
+  "emailFormatLimitToastDesc": {
+    "message": "You can save up to 10 formats.",
+    "description": "Explains the maximum number of saved formats."
+  },
+  "keepOneEmailFormatToastDesc": {
+    "message": "At least one email format must remain saved.",
+    "description": "Error when deleting the last format."
+  },
+  "emailFormatAddedToast": {
+    "message": "Email format saved.",
+    "description": "Success message after adding a format."
+  },
+  "emailFormatRemovedToast": {
+    "message": "Email format deleted.",
+    "description": "Success message after removing a format."
+  },
+  "settingsStorageError": {
+    "message": "Could not save settings. Please try again.",
+    "description": "Error when reading or saving extension settings fails."
+  },
+  "settingsLoading": {
+    "message": "Loading settings…",
+    "description": "Loading status for the format and domain controls."
+  },
+  "settingsLoadError": {
+    "message": "Could not load settings. Please try again.",
+    "description": "Error displayed when initial settings cannot be read."
+  },
+  "retryButton": {
+    "message": "Retry",
+    "description": "Button for retrying the loading of settings."
+  },
+  "emailFormatChangedToastDesc": {
+    "message": "This format changed on another device. Select a saved format and try again."
   }
 }

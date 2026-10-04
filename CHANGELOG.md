@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-10-04
+
+### Added
+
+- Save up to 10 shared email patterns, with a selector, update, save-as-new and delete controls.
+- Preserve the current email pattern when upgrading to saved formats.
+- Show unsaved edits and keep them separate from the pattern used for generation.
+
+### Changed
+
+- Link the popup GitHub icon and extension homepage to the Teda9 fork.
+- Keep long email domains from squeezing the pattern editor and allow the popup to scroll.
+- Avoid rewriting unchanged synced settings when opening the popup.
+- Run format migration and selection tests in the automatic release workflow.
+
 ## [0.2.2] - 2026-09-27
 
 ### Added
@@ -64,8 +79,9 @@ All notable changes to this project will be documented in this file.
 
 - Release of something awesome.
 
-[unreleased]: https://github.com/Teda9/email-masker/compare/0.2.2...HEAD
-[0.2.2]: https://github.com/Teda9/email-masker/compare/0.2.1...0.2.2
+[unreleased]: https://github.com/Teda9/email-masker/commits/main
+[0.2.3]: https://github.com/Teda9/email-masker/releases
+[0.2.2]: https://github.com/Teda9/email-masker/compare/0.2.1...v0.2.2-build.1
 [0.2.1]: https://github.com/irazasyed/email-masker/compare/0.2.0...0.2.1
 [0.2.0]: https://github.com/irazasyed/email-masker/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/irazasyed/email-masker/compare/0.0.1...0.1.0

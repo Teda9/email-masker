@@ -1,5 +1,10 @@
-import { DEFAULT_EMAIL_DOMAIN, DEFAULT_EMAIL_FORMAT, STORE_KEYS } from '@/lib/constants'
+import {
+  DEFAULT_EMAIL_DOMAIN,
+  DEFAULT_EMAIL_FORMAT,
+  STORE_KEYS
+} from '@/lib/constants'
 import { STORAGE_INSTANCE } from '@/lib/storage/storage-instance'
+import { saveStorageValues } from '@/lib/storage/storage-values'
 
 export type EmailDomainSettings = {
   domains: string[]
@@ -16,8 +21,7 @@ export function normalizeEmailDomain(domain: string): string | null {
     normalizedDomain.length <= 253 &&
     labels.length > 1 &&
     labels.every(
-      (label) =>
-        label.length <= 63 && emailDomainLabelPattern.test(label)
+      (label) => label.length <= 63 && emailDomainLabelPattern.test(label)
     )
 
   return isValidDomain ? normalizedDomain : null
@@ -60,11 +64,11 @@ function normalizeEmailDomains(value: unknown): string[] {
 }
 
 async function saveEmailDomainSettings(settings: EmailDomainSettings) {
-  await Promise.all([
-    STORAGE_INSTANCE.set(STORE_KEYS.EMAIL_DOMAINS, settings.domains),
-    STORAGE_INSTANCE.set(STORE_KEYS.ACTIVE_EMAIL_DOMAIN, settings.activeDomain),
-    STORAGE_INSTANCE.set(STORE_KEYS.EMAIL_FORMAT, settings.emailFormat)
-  ])
+  await saveStorageValues({
+    [STORE_KEYS.EMAIL_DOMAINS]: settings.domains,
+    [STORE_KEYS.ACTIVE_EMAIL_DOMAIN]: settings.activeDomain,
+    [STORE_KEYS.EMAIL_FORMAT]: settings.emailFormat
+  })
 }
 
 export async function initializeEmailDomainSettings(): Promise<EmailDomainSettings> {
@@ -81,9 +85,8 @@ export async function initializeEmailDomainSettings(): Promise<EmailDomainSettin
       : DEFAULT_EMAIL_FORMAT
   const formatDomain = getFormatDomain(emailFormat)
   const domains = normalizeEmailDomains(storedDomains)
-  const savedDomains = domains.length > 0
-    ? domains
-    : [formatDomain ?? DEFAULT_EMAIL_DOMAIN]
+  const savedDomains =
+    domains.length > 0 ? domains : [formatDomain ?? DEFAULT_EMAIL_DOMAIN]
   const normalizedActiveDomain =
     typeof storedActiveDomain === 'string'
       ? normalizeEmailDomain(storedActiveDomain)
@@ -108,7 +111,7 @@ export async function initializeEmailDomainSettings(): Promise<EmailDomainSettin
 
 export async function setActiveEmailDomain(
   domain: string,
-  emailFormat: string
+  emailFormat?: string
 ): Promise<EmailDomainSettings> {
   const normalizedDomain = normalizeEmailDomain(domain)
 
@@ -123,7 +126,10 @@ export async function setActiveEmailDomain(
   const updatedSettings = {
     ...settings,
     activeDomain: normalizedDomain,
-    emailFormat: replaceFormatDomain(emailFormat, normalizedDomain)
+    emailFormat: replaceFormatDomain(
+      emailFormat ?? settings.emailFormat,
+      normalizedDomain
+    )
   }
 
   await saveEmailDomainSettings(updatedSettings)
@@ -133,7 +139,7 @@ export async function setActiveEmailDomain(
 
 export async function addEmailDomain(
   domain: string,
-  emailFormat: string
+  emailFormat?: string
 ): Promise<EmailDomainSettings> {
   const normalizedDomain = normalizeEmailDomain(domain)
 
@@ -148,7 +154,10 @@ export async function addEmailDomain(
   const updatedSettings = {
     domains: [...settings.domains, normalizedDomain],
     activeDomain: normalizedDomain,
-    emailFormat: replaceFormatDomain(emailFormat, normalizedDomain)
+    emailFormat: replaceFormatDomain(
+      emailFormat ?? settings.emailFormat,
+      normalizedDomain
+    )
   }
 
   await saveEmailDomainSettings(updatedSettings)
@@ -158,7 +167,7 @@ export async function addEmailDomain(
 
 export async function removeEmailDomain(
   domain: string,
-  emailFormat: string
+  emailFormat?: string
 ): Promise<EmailDomainSettings> {
   const normalizedDomain = normalizeEmailDomain(domain)
 
@@ -178,7 +187,10 @@ export async function removeEmailDomain(
   const updatedSettings = {
     domains,
     activeDomain,
-    emailFormat: replaceFormatDomain(emailFormat, activeDomain)
+    emailFormat: replaceFormatDomain(
+      emailFormat ?? settings.emailFormat,
+      activeDomain
+    )
   }
 
   await saveEmailDomainSettings(updatedSettings)

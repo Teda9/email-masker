@@ -10,7 +10,7 @@ import { lang } from '@/lib/utils'
 
 function Layout({ children }) {
   return (
-    <main className="w-[32rem] mx-auto p-2">
+    <main className="w-[32rem] max-w-full max-h-[600px] overflow-y-auto mx-auto p-2">
       <Card className="border-0 rounded-none">
         <Toaster
           position="top-center"
@@ -50,9 +50,10 @@ function Layout({ children }) {
                 <ThemeModeToggle />
 
                 <a
-                  href="https://dub.sh/email-masker-github"
+                  href="https://github.com/Teda9/email-masker"
                   title="GitHub"
-                  target="_blank">
+                  target="_blank"
+                  rel="noopener noreferrer">
                   <GithubIcon size={22} />
                 </a>
               </div>

@@ -158,11 +158,17 @@ The above format will generate email addresses like `github.29wun@example.com`
 prefix-[random:8]@example.com
 ```
 
+## Saved formats and domains
+
+The popup can save up to 10 email patterns. Use the Email Format dropdown to switch between them. Edit the pattern and click the save icon to update the selected preset, or choose **Save as new** to keep it as another preset. The counter shows how many presets are saved. Editing alone does not change the format used to generate addresses.
+
+Patterns contain only the part before `@`, such as `[domain].[random:5]` or `[words:2][numbers:3]`. All saved patterns are shared by the email domains; changing the domain changes only the suffix. Existing settings are migrated automatically into the first preset. The selected pattern and domain are remembered, and at least one of each must remain saved.
+
 ## Build and Automatic Releases
 
-The fork's `Build and release extensions` workflow builds both Chrome Manifest V3 and Firefox Manifest V2 packages whenever updates are pushed to `main` / `master`, a `v*` or numeric version tag is pushed, or the workflow is run manually. It installs dependencies from `package-lock.json`, builds both ZIPs, checks TypeScript and the Firefox package, then verifies manifest versions, extension versions, referenced resources and packaged files before publishing to GitHub Releases.
+The fork's `Build and release extensions` workflow builds both Chrome Manifest V3 and Firefox Manifest V2 packages whenever updates are pushed to `main` / `master`, a `v*` or numeric version tag is pushed, or the workflow is run manually. It installs dependencies from `package-lock.json`, runs the saved-format tests, builds both ZIPs, checks TypeScript and the Firefox package, then verifies manifest versions, extension versions, referenced resources and packaged files before publishing to GitHub Releases.
 
-Ordinary updates use `v<package.json version>-build.<run number>` as the release tag; version-tag builds use the original tag. Successful releases are marked Latest and include `email-masker-<version>-chrome-mv3.zip`, `email-masker-<version>-firefox-mv2-unsigned.zip` and `SHA256SUMS.txt`. Rerunning a workflow updates the same release. Pull requests build and check packages without publishing. Both browser builds must pass before a release is published. No additional release secrets are required; only the release job has `contents: write` permission. Keep `.github/workflows/release.yml` when copying future upstream updates. The first automated release still needs confirmation from a real GitHub run.
+Ordinary updates use `v<package.json version>-build.<run number>` as the release tag; version-tag builds use the original tag. Successful releases are marked Latest and include `email-masker-<version>-chrome-mv3.zip`, `email-masker-<version>-firefox-mv2-unsigned.zip` and `SHA256SUMS.txt`. Rerunning a workflow updates the same release. Pull requests build and check packages without publishing. Both browser builds must pass before a release is published. No additional release secrets are required; only the release job has `contents: write` permission. Keep `.github/workflows/release.yml` when copying future upstream updates.
 
 The browser ZIPs contain compiled extension files. GitHub's separate Source code downloads contain the repository at the release tag. The on-page flame icon uses a `url:` import so it is included as a real SVG file and its generated manifest entry points to an existing resource.
 

@@ -28,6 +28,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - run: npm test
       - run: npm run package
       - run: npm exec -- tsc --noEmit --incremental false
       - run: npm exec -- web-ext lint --source-dir build/firefox-mv2-prod
